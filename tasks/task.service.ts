@@ -23,8 +23,10 @@ export class TaskService {
     }
 
     getTasks(): TaskModel[] {
-            if (this.tasks.length !== 0) {
+            if (this.tasks.length > 0) {
                 return this.tasks;
+            } else {
+                return [];
             }
     }
 
