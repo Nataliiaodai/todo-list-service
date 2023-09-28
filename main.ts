@@ -84,25 +84,31 @@ app.put('/tasks/:id', async (req, res) => {
     const { taskName, isDone, isStarred } = req.body;
 
     const task = await TaskMongooseModel.findOne({ _id: id });
-    // console.log(" tasks Id---", id);
-    // console.log(" tasks---", task);
+
     if (!task) {
         return res.status(404).json({ message: `Task with id "${id}" not found.` });
     }
-
 
     if (!taskName) {
         return res.status(422).json({ message: 'The field taskName is required' });
     }
 
-    console.log("req.body AFTER---", req.body);
-    return res.status(200).json({ data: req.body });
-    // await TaskMongooseModel.updateOne({ _id: id }, { taskName, isDone, isStarred });
-    //
-    // const taskUpdated = await TaskMongooseModel.findById(id, {taskName, isDone, isStarred });
-    //
-    // return res.status(200).json({ data: taskUpdated });
+    await TaskMongooseModel.updateOne({ _id: id }, { taskName, isDone, isStarred });
+     const taskUpdated = await TaskMongooseModel.findById(id);
+
+    console.log("taskUpdated---", taskUpdated);
+    return res.status(200).json({ data: taskUpdated });
 });
+
+
+app.delete('/tasks/:id', async (req, res) => {
+    const { id } = req.params;
+
+    await TaskMongooseModel.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: `Task with id "${id}" deleted successfully.` });
+});
+
 
 // app.get('/tasks', (req, res) => {
 //     let tasksToReturn: TaskModel[] = taskService.getTasks()
