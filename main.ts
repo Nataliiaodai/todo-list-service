@@ -31,7 +31,7 @@ const schema = mongoose.Schema({
 const TaskMongooseModel = mongoose.model("model", schema, "tasks");
 
 app.post('/tasks', async (req, res) => {
-    console.log("Request body", req.body)
+    // console.log("Request body", req.body)
     let task = new TaskMongooseModel(req.body);
     try {
         const savedTask = await task.save();
@@ -57,7 +57,17 @@ app.get('/tasks', async (req, res) => {
     try {
         const tasks = await TaskMongooseModel.find({}).exec();
         // console.log("Get tasks---", tasks);
-        res.status(200).send(tasks);
+      let mappedResponse = tasks.map(task => task = {
+          taskId: task._id,
+          taskName: task.taskName,
+          isDone: task.isDone,
+          isStarred: task.isStarred,
+
+      })
+
+        // console.log("responseBody", tasks);
+         console.log("mappedResponse", mappedResponse);
+        res.status(200).send(mappedResponse);
     } catch (error) {
         res.status(500).send(error.message);
     }
